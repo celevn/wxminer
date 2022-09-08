@@ -1,4 +1,5 @@
 lxml
 pandas
 plotly
+pyvis
 streamlit
