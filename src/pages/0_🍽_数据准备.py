@@ -41,6 +41,7 @@ def show_chat_parser():
         else:
             st.session_state["chat"] = chat
             st.success("聊天记录解析成功！")
+            show_date_picker()
 
 @st.experimental_memo
 def parse_chat(message_file):
@@ -65,7 +66,9 @@ def show_date_picker():
 body = build_page("WX Miner", "🍽", "数据准备", "向 WX Miner 投喂原料")
 with body:
     show_chat_loader()
-    if st.session_state["file_uploaded"]:
+    if "chat" not in st.session_state:
+        if st.session_state["file_uploaded"]:
+            show_chat_parser()
+    else:
         show_chat_parser()
-        if "chat" in st.session_state:
-            show_date_picker()
+        show_date_picker()
