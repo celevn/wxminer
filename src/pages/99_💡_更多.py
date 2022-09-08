@@ -1,6 +1,6 @@
 import streamlit as st
 
-from wxminer.pages import build_page
+from wxminer.pages import build_page, QR_GROUP_URL, QR_DONATE_URL
 
 
 body = build_page()
@@ -8,17 +8,19 @@ body = build_page()
 with body:
     st.markdown("---")
     st.header("参与共建")
-    st.markdown("""
-        💡 使用问题？想法建议？拓展开发？
 
-        1. 到 [GitHub](https://github.com/celevn/wxminer/issues) 新建 Issue
-        2. 加入[交流群](https://raw.githubusercontent.com/celevn/wxminer/main/src/assets/QR_GROUP.JPG)一起讨论
+    st.subheader("💡 使用问题？想法建议？拓展开发？")
+    with st.expander("1. 提交问题报告"):
+        st.markdown("[New issue on GitHub](https://github.com/celevn/wxminer/issues/new)")
+    with st.expander("2. 加交流群讨论"):
+        st.image(QR_GROUP_URL)
 
-        😋 觉得 WX Miner 有趣有用？
-
-        1. 分享给你的朋友
-        2. [请作者喝咖啡](https://raw.githubusercontent.com/celevn/wxminer/main/src/assets/QR_DONATE.PNG)
-    """)
+    st.subheader("😋 觉得 WX Miner 有趣有用？")
+    with st.expander("1. 分享给朋友们"):
+        st.markdown("`https://share.streamlit.io/celevn/wxminer/main/src/home.py`")
+    with st.expander("2. 请作者喝咖啡"):
+        st.image(QR_DONATE_URL)
+    
     st.markdown("---")
     st.header("引用致谢")
     st.markdown("""
