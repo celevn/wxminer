@@ -63,6 +63,7 @@ class WXBackupLoader(Loader):
 
     def clean_message(self, message, member):
         df_message = pd.DataFrame(message)
+        df_message["svrid"] = df_message["m_uiMesSvrID"]
         df_message = df_message.sort_values("m_uiCreateTime")
         df_message["dt"] = (df_message["m_uiCreateTime"].apply(
             datetime.datetime.fromtimestamp, args=(datetime.timezone.utc,)
@@ -108,7 +109,7 @@ class WXBackupLoader(Loader):
         df_message["type"] = df_message["m_uiMessageType"].map(MESSAGE_TYPE)
         df_message["type_ext"] = df_message["appmsgType"].map(MESSAGE_TYPE_EXT)
 
-        columns = ["dt", "sender", "name", "type", "type_ext", "content"]
+        columns = ["svrid", "dt", "sender", "name", "type", "type_ext", "content"]
         return df_message[columns]
 
 
