@@ -1,4 +1,6 @@
 lxml
+jieba_fast
 pandas
 plotly
 streamlit
+wordcloud
