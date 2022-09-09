@@ -10,12 +10,9 @@ from wxminer.utils import parse_xml_msg
 from wxminer.pages import build_page
 
 
-def show_refer_network(chat, topn=100):
-    st.markdown("---")
-    st.header("🔗 引用网络")
-    st.caption("遥相望，引相谈，答疑问，救冷场")
-
-    message, member = chat.message, chat.member
+@st.experimental_memo
+def get_refer_network(_chat, topn):
+    message, member = _chat.message, _chat.member
     message_refer = message[message["type_ext"]=="引用"][["svrid", "sender", "content"]].assign(
         svrid_r=lambda df: (df["content"].apply(
             parse_xml_msg, path="appmsg/refermsg/svrid"
@@ -36,7 +33,14 @@ def show_refer_network(chat, topn=100):
     net = Network(height="500px", width="100%")
     net.add_nodes(nodes.index, size=nodes["size"].map(float), label=nodes["name"], title=nodes["name"])
     net.add_edges(edges)
-    components.html(net.generate_html(), height=600, scrolling=True)
+    return net.generate_html()
+
+def show_refer_network(chat, topn=100):
+    st.markdown("---")
+    st.header("🔗 引用网络")
+    st.caption("遥相望，引相谈，答疑问，救冷场")
+    net_html = get_refer_network(chat, topn)
+    components.html(net_html, height=600, scrolling=True)
 
 
 body = build_page("WX Miner", "🕸", "引用网络", "关于那些隔空对白")
