@@ -1,6 +1,5 @@
 lxml
-jieba_fast
 pandas
 plotly
+pyvis
 streamlit
-wordcloud
