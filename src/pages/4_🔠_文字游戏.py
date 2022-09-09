@@ -32,7 +32,7 @@ def get_chat_word(_chat, topn=100):
 
 
 def plot_word_cloud(word_freq):
-    wc = WordCloud(font_path="STHeiti Medium", width=600, height=400, mode="RGBA", background_color=None)
+    wc = WordCloud(font_path="wqy-zenhei", width=600, height=400, mode="RGBA", background_color=None)
     fig = wc.generate_from_frequencies(word_freq).to_image()
     st.image(fig, use_column_width=True)
 
