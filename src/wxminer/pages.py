@@ -7,6 +7,9 @@ ST_PAGE_ICON_DEFAULT = "💬"
 ST_HEADER_TITLE_DEFAULT = "WX Miner"
 ST_HEADER_DESCRIPTION_DEFAULT = "重识微信聊天记录"
 ST_FOOTER_CONTENT_DEFAULT = "Copyright © 2022, Celevn"
+QR_GROUP_URL = "https://user-images.githubusercontent.com/10850975/190350607-7a5e3ca9-75fa-4864-85f4-2dc2718cd5cf.PNG"
+QR_DONATE_URL = "https://user-images.githubusercontent.com/10850975/189103585-240ca79d-b3d9-46b7-9ee9-98a5051db706.PNG"
+
 
 footer_html = """
     <style>
@@ -47,8 +50,7 @@ def build_page(title=ST_PAGE_TITLE_DEFAULT,
         page_icon=icon,
         initial_sidebar_state="expanded",
         menu_items={
-            "Get help": "https://raw.githubusercontent.com/celevn/wxminer/main/src/assets/QR_GROUP.JPG",
-            "Report a bug": "https://github.com/celevn/wxminer/issues",
+            "Get help": QR_GROUP_URL,
             "About": f"""
                 # WX Miner
                 WeChat mining tool by [Celevn](https://github.com/celevn)

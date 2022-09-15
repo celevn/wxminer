@@ -25,7 +25,7 @@ class WXBackupLoader(Loader):
     def __init__(self) -> None:
         super().__init__()
 
-    def load_chat(self, file):
+    def load_chat(self, file, self_id=None, self_name=None, self_headimg=None):
         """
         Parse message.js file to build Chat
 
@@ -35,6 +35,10 @@ class WXBackupLoader(Loader):
         Returns:
             chat: wxminer.miner.Chat
         """
+        self.self_id = self_id if self_id else SELF_ID_DEFAULT
+        self.self_name = self_name if self_name else SELF_NAME_DEFAULT
+        self.self_headimg = self_headimg if self_headimg else SELF_HEADIMG_DEFAULT
+
         try:
             js = json.loads(file.read()[11:])
             type = js.get("type")
@@ -58,11 +62,12 @@ class WXBackupLoader(Loader):
         df_member["remark"] = "" if 1 not in name_split else name_split[1]
         df_member["headimg"] = df_member["head"].str.replace("[\x00-\x1f]", "", regex=True)
         df_member = df_member[["name", "remark", "headimg"]]
-        df_member.loc[SELF_ID_DEFAULT] = [SELF_NAME_DEFAULT, "我", SELF_HEADIMG_DEFAULT]
+        df_member.loc[self.self_id] = [self.self_name, "我", self.self_headimg]
         return df_member
 
     def clean_message(self, message, member):
         df_message = pd.DataFrame(message)
+        df_message["svrid"] = df_message["m_uiMesSvrID"]
         df_message = df_message.sort_values("m_uiCreateTime")
         df_message["dt"] = (df_message["m_uiCreateTime"].apply(
             datetime.datetime.fromtimestamp, args=(datetime.timezone.utc,)
@@ -86,7 +91,7 @@ class WXBackupLoader(Loader):
         df_message.loc[idx_split_bug, "sender"] = None
 
         # 标注本人消息
-        df_message.loc[idx_selfmsg, "sender"] = SELF_ID_DEFAULT
+        df_message.loc[idx_selfmsg, "sender"] = self.self_id
 
         # 解析 appmsg 类型并标注
         df_message.loc[idx_appmsg, "appmsgType"] = (
@@ -108,7 +113,7 @@ class WXBackupLoader(Loader):
         df_message["type"] = df_message["m_uiMessageType"].map(MESSAGE_TYPE)
         df_message["type_ext"] = df_message["appmsgType"].map(MESSAGE_TYPE_EXT)
 
-        columns = ["dt", "sender", "name", "type", "type_ext", "content"]
+        columns = ["svrid", "dt", "sender", "name", "type", "type_ext", "content"]
         return df_message[columns]
 
 
@@ -139,12 +144,10 @@ class Chat:
     def __init__(self,
                  type : str,
                  member : pd.DataFrame,
-                 message : pd.DataFrame,
-                 selfname=SELF_NAME_DEFAULT) -> None:
+                 message : pd.DataFrame) -> None:
         self.message = message
         self.member = member
         self.type = type
-        self.selfname = selfname
 
     def get_date_span(self) -> tuple:
         min_date = self.message["dt"].min().date()
@@ -167,6 +170,13 @@ class Chat:
         message_last_day = self.message[self.message["dt"] > self.edate]
         self.message_count_last_day = len(message_last_day)
         self.active_user_count_last_day = message_last_day["sender"].nunique()
+
+    def get_message_monthly_count(self) -> pd.DataFrame:
+        message_monthly = (self.message.set_index("dt")
+                                     .resample("MS")["content"]
+                                     .count().rename("message_count")
+                                     .reset_index())
+        return message_monthly
 
     def get_message_daily_count(self) -> pd.DataFrame:
         message_daily = (self.message.set_index("dt")
