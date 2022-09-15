@@ -110,8 +110,12 @@ def plot_member_stayup_rank(_chat, thresh, topn):
 def show_member_stayup_rank(chat, topn=10):
     st.markdown("---")
     st.header("🌜 熬夜榜")
-    st.caption("月亮不睡我不睡")
-    thresh = st.slider("晚睡阈值", 0, 6, (0,6))
+    st.caption("""
+        月亮不睡我不睡：
+        1. 星星越深，熬夜越拼（当月熬夜天数）
+        2. 星星越宽，夜谈越欢（夜间消息数目）
+    """)
+    thresh = st.slider("熬夜界定", 0, 6, (0,6), format="%d:00 AM")
     fig = plot_member_stayup_rank(chat, thresh, topn)
     st.plotly_chart(fig, use_container_width=True)
 

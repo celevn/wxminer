@@ -17,7 +17,10 @@ with body:
 
     st.subheader("😋 觉得 WX Miner 有趣有用？")
     with st.expander("1. 分享给朋友们"):
-        st.markdown("`https://share.streamlit.io/celevn/wxminer/main/src/home.py`")
+        st.markdown("""
+            - 使用链接：`https://share.streamlit.io/celevn/wxminer/main/src/home.py`
+            - 录屏分享：右上角菜单 - `Record a screencast`
+        """)
     with st.expander("2. 请作者喝咖啡"):
         st.image(QR_DONATE_URL)
     
