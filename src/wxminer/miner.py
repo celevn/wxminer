@@ -171,6 +171,13 @@ class Chat:
         self.message_count_last_day = len(message_last_day)
         self.active_user_count_last_day = message_last_day["sender"].nunique()
 
+    def get_message_monthly_count(self) -> pd.DataFrame:
+        message_monthly = (self.message.set_index("dt")
+                                     .resample("MS")["content"]
+                                     .count().rename("message_count")
+                                     .reset_index())
+        return message_monthly
+
     def get_message_daily_count(self) -> pd.DataFrame:
         message_daily = (self.message.set_index("dt")
                                      .resample("D")["content"]

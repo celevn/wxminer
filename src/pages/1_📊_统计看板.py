@@ -7,6 +7,7 @@ from wxminer.pages import build_page
 def show_chat_stats(chat):
     st.markdown("---")
     st.header("💯 关键聊天指标")
+    st.caption("红色增长数字为挖掘期最后一日数目")
     chat.calc_chat_stats()
 
     col1, col2, col3 = st.columns(3)
@@ -18,22 +19,25 @@ def show_chat_stats(chat):
                 value=chat.active_day_count, delta=1)
 
 @st.experimental_memo
-def plot_message_daily(_chat):
-    message_daily = _chat.get_message_daily_count()
+def plot_message_count(_chat):
+    if (_chat.message["dt"].max() - _chat.message["dt"].min()).days > 730:
+        message_count = _chat.get_message_monthly_count()
+    else:
+        message_count = _chat.get_message_daily_count()
     plotly_line_layout = {
         "xaxis_title": None,
         "yaxis_title": None,
         "showlegend": False,
         "margin": dict(t=25, l=25, r=25, b=25),
     }
-    fig = px.line(message_daily, x="dt", y="message_count").update_layout(plotly_line_layout)
+    fig = px.line(message_count, x="dt", y="message_count").update_layout(plotly_line_layout)
     return fig
 
-def show_message_daily(chat):
+def show_message_count(chat):
     st.markdown("---")
-    st.header("📈 逐日消息数目")
+    st.header("📈 消息数目曲线")
     st.caption("这消息跑得赢大盘吗")
-    fig = plot_message_daily(chat)
+    fig = plot_message_count(chat)
     st.plotly_chart(fig, use_container_width=True)
 
 @st.experimental_memo
@@ -54,14 +58,14 @@ def show_message_type_dist(chat):
 
 @st.experimental_memo
 def plot_message_weekday_dist(_chat):
-    message_daily = _chat.get_message_daily_count()
+    message_count = _chat.get_message_daily_count()
     plotly_box_layout = {
         "xaxis_title": None,
         "yaxis_title": None,
         "showlegend": False,
         "margin": dict(t=25, l=25, r=25, b=25),
     }
-    fig = px.box(message_daily, x="weekday", y="message_count").update_layout(plotly_box_layout)
+    fig = px.box(message_count, x="weekday", y="message_count").update_layout(plotly_box_layout)
     return fig
 
 def show_message_weekday_dist(chat):
@@ -96,7 +100,7 @@ with body:
     if "chat" in st.session_state:
         chat = st.session_state["chat"]
         show_chat_stats(chat)
-        show_message_daily(chat)
+        show_message_count(chat)
         show_message_type_dist(chat)
         show_message_weekday_dist(chat)
         show_message_hour_dist(chat)
