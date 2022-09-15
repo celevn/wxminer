@@ -51,7 +51,7 @@ def show_chat_parser():
 @st.experimental_memo
 def parse_chat(message_file, self_id, self_name):
     loader = WXBackupLoader()
-    chat = loader.load_chat(message_file, self_id, self_name)
+    chat = loader.load_chat(message_file, self_id=self_id, self_name=self_name)
     return chat
 
 def show_date_picker():
