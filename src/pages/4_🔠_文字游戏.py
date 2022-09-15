@@ -1,7 +1,13 @@
+import platform
+
 import streamlit as st
 import pandas as pd
-import jieba_fast as jieba
 from wordcloud import WordCloud
+
+try:
+    import jieba_fast as jieba
+except ModuleNotFoundError:
+    import jieba
 
 from wxminer.utils import parse_xml_msg
 from wxminer.pages import build_page
@@ -32,7 +38,14 @@ def get_chat_word(_chat, topn=100):
 
 
 def plot_word_cloud(word_freq):
-    wc = WordCloud(font_path="wqy-zenhei", width=600, height=400, mode="RGBA", background_color=None)
+    font_by_os = {
+        "Linux": "wqy-zenhei",
+        "Windows": "Simhei",
+        "Darwin": "STHeiti Medium",
+    }
+    font = font_by_os.get(platform.system(), None)
+
+    wc = WordCloud(font_path=font, width=600, height=400, mode="RGBA", background_color=None)
     fig = wc.generate_from_frequencies(word_freq).to_image()
     st.image(fig, use_column_width=True)
 
