@@ -30,7 +30,7 @@ def get_refer_network(_chat, topn):
                .rename("size").value_counts().to_frame().join(member["name"]))
     # st.experimental_show(nodes)
     edges = message_refer_agg[["sender", "sender_r", "value"]].itertuples(index=False, name=None)
-    net = Network(height="500px", width="100%")
+    net = Network(height="500px", width="100%", directed=True)
     net.add_nodes(nodes.index, size=nodes["size"].map(float), label=nodes["name"], title=nodes["name"])
     net.add_edges(edges)
     return net.generate_html()
@@ -38,7 +38,11 @@ def get_refer_network(_chat, topn):
 def show_refer_network(chat, topn=100):
     st.markdown("---")
     st.header("🔗 引用网络")
-    st.caption("遥相望，引相谈，答疑问，救冷场")
+    st.caption("""
+        1. 截取前引用数最多的前 100 对节点
+        2. 节点越大，表示其关联节点越多
+        3. 箭头由引用人指向被引用人
+    """)
     net_html = get_refer_network(chat, topn)
     components.html(net_html, height=600, scrolling=True)
 
