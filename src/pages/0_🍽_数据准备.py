@@ -2,6 +2,7 @@ import streamlit as st
 
 from wxminer.miner import WXBackupLoader, LocalLoader, Chat
 from wxminer.pages import build_page
+from wxminer.consts import SELF_ID_DEFAULT, SELF_NAME_DEFAULT
 
 
 def show_chat_loader():
@@ -31,11 +32,15 @@ def show_chat_loader():
 def show_chat_parser():
     st.markdown("---")
     st.header("👩‍🍳 解析数据")
-    button_parse = st.button("开始解析")
+    with st.form("parser"):
+        with st.expander("补充本人信息"):
+            # self_id = st.text_input("微信号", value=SELF_ID_DEFAULT, max_chars=20)
+            self_name = st.text_input("你的微信昵称", value=SELF_NAME_DEFAULT, max_chars=20)
+        button_parse = st.form_submit_button("开始解析")
     if button_parse:
         try:
             file = st.session_state["file_uploaded"]
-            chat = parse_chat(file)
+            chat = parse_chat(file, self_id=None, self_name=self_name)
         except Exception as err:
             st.error(f"聊天记录解析失败: {err}")
         else:
@@ -44,9 +49,9 @@ def show_chat_parser():
             show_date_picker()
 
 @st.experimental_memo
-def parse_chat(message_file):
+def parse_chat(message_file, self_id, self_name):
     loader = WXBackupLoader()
-    chat = loader.load_chat(message_file)
+    chat = loader.load_chat(message_file, self_id, self_name)
     return chat
 
 def show_date_picker():

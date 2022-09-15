@@ -25,7 +25,7 @@ class WXBackupLoader(Loader):
     def __init__(self) -> None:
         super().__init__()
 
-    def load_chat(self, file):
+    def load_chat(self, file, self_id=None, self_name=None, self_headimg=None):
         """
         Parse message.js file to build Chat
 
@@ -35,6 +35,10 @@ class WXBackupLoader(Loader):
         Returns:
             chat: wxminer.miner.Chat
         """
+        self.self_id = self_id if self_id else SELF_ID_DEFAULT
+        self.self_name = self_name if self_name else SELF_NAME_DEFAULT
+        self.self_headimg = self_headimg if self_headimg else SELF_HEADIMG_DEFAULT
+
         try:
             js = json.loads(file.read()[11:])
             type = js.get("type")
@@ -58,7 +62,7 @@ class WXBackupLoader(Loader):
         df_member["remark"] = "" if 1 not in name_split else name_split[1]
         df_member["headimg"] = df_member["head"].str.replace("[\x00-\x1f]", "", regex=True)
         df_member = df_member[["name", "remark", "headimg"]]
-        df_member.loc[SELF_ID_DEFAULT] = [SELF_NAME_DEFAULT, "我", SELF_HEADIMG_DEFAULT]
+        df_member.loc[self.self_id] = [self.self_name, "我", self.self_headimg]
         return df_member
 
     def clean_message(self, message, member):
@@ -87,7 +91,7 @@ class WXBackupLoader(Loader):
         df_message.loc[idx_split_bug, "sender"] = None
 
         # 标注本人消息
-        df_message.loc[idx_selfmsg, "sender"] = SELF_ID_DEFAULT
+        df_message.loc[idx_selfmsg, "sender"] = self.self_id
 
         # 解析 appmsg 类型并标注
         df_message.loc[idx_appmsg, "appmsgType"] = (
@@ -140,12 +144,10 @@ class Chat:
     def __init__(self,
                  type : str,
                  member : pd.DataFrame,
-                 message : pd.DataFrame,
-                 selfname=SELF_NAME_DEFAULT) -> None:
+                 message : pd.DataFrame) -> None:
         self.message = message
         self.member = member
         self.type = type
-        self.selfname = selfname
 
     def get_date_span(self) -> tuple:
         min_date = self.message["dt"].min().date()
