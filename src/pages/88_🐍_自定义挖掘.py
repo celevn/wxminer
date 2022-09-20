@@ -30,7 +30,10 @@ with body:
     if "chat" in st.session_state:
         chat = st.session_state["chat"]
         message = chat.message
-        show_custom_runner()
+        try:
+            show_custom_runner()
+        except Exception as err:
+            st.error(f"出现了一点问题：{err}")
     else:
         st.markdown("---")
         st.warning("请先完成数据准备")

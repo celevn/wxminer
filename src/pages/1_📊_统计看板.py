@@ -8,15 +8,17 @@ def show_chat_stats(chat):
     st.markdown("---")
     st.header("💯 关键聊天指标")
     st.caption("红色增长数字为挖掘期最后一日数目")
-    chat.calc_chat_stats()
-
-    col1, col2, col3 = st.columns(3)
-    col1.metric(label="消息条数", delta_color="inverse",
-                value=chat.message_count, delta=chat.message_count_last_day)
-    col2.metric(label="参与人数", delta_color="inverse",
-                value=chat.active_user_count, delta=chat.active_user_count_last_day)
-    col3.metric(label="活跃天数", delta_color="inverse",
-                value=chat.active_day_count, delta=1)
+    try:
+        chat.calc_chat_stats()
+        col1, col2, col3 = st.columns(3)
+        col1.metric(label="消息条数", delta_color="inverse",
+                    value=chat.message_count, delta=chat.message_count_last_day)
+        col2.metric(label="参与人数", delta_color="inverse",
+                    value=chat.active_user_count, delta=chat.active_user_count_last_day)
+        col3.metric(label="活跃天数", delta_color="inverse",
+                    value=chat.active_day_count, delta=1)
+    except Exception as err:
+        st.error(f"出现了一点问题：{err}")
 
 @st.experimental_memo
 def plot_message_count(_chat):
@@ -37,8 +39,11 @@ def show_message_count(chat):
     st.markdown("---")
     st.header("📈 消息数目曲线")
     st.caption("这消息跑得赢大盘吗")
-    fig = plot_message_count(chat)
-    st.plotly_chart(fig, use_container_width=True)
+    try:
+        fig = plot_message_count(chat)
+        st.plotly_chart(fig, use_container_width=True)
+    except Exception as err:
+        st.error(f"出现了一点问题：{err}")
 
 @st.experimental_memo
 def plot_message_type_dist(_chat):
@@ -53,8 +58,11 @@ def show_message_type_dist(chat):
     st.markdown("---")
     st.header("🎨 消息类型分布")
     st.caption("点击拼图可以放大")
-    fig = plot_message_type_dist(chat)
-    st.plotly_chart(fig, use_container_width=True)
+    try:
+        fig = plot_message_type_dist(chat)
+        st.plotly_chart(fig, use_container_width=True)
+    except Exception as err:
+        st.error(f"出现了一点问题：{err}")
 
 @st.experimental_memo
 def plot_message_weekday_dist(_chat):
@@ -72,8 +80,11 @@ def show_message_weekday_dist(chat):
     st.markdown("---")
     st.header("🧑‍💻 周内活跃度对比")
     st.caption("工作日勤勤恳恳摸鱼，休息日兢兢业业划水")
-    fig = plot_message_weekday_dist(chat)
-    st.plotly_chart(fig, use_container_width=True)
+    try:
+        fig = plot_message_weekday_dist(chat)
+        st.plotly_chart(fig, use_container_width=True)
+    except Exception as err:
+        st.error(f"出现了一点问题：{err}")
 
 @st.experimental_memo
 def plot_message_hour_dist(_chat):
@@ -91,8 +102,11 @@ def show_message_hour_dist(chat):
     st.markdown("---")
     st.header("🌗 日内活跃度对比")
     st.caption("一日三餐分出两段白昼，嗨歌安睡亦是不同夜幕")
-    fig = plot_message_hour_dist(chat)
-    st.plotly_chart(fig, use_container_width=True)
+    try:
+        fig = plot_message_hour_dist(chat)
+        st.plotly_chart(fig, use_container_width=True)
+    except Exception as err:
+        st.error(f"出现了一点问题：{err}")
 
 
 body = build_page("WX Miner", "📊", "统计看板", "聊天大数据、活跃曲线、消息类型")

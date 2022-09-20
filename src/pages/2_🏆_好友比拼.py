@@ -43,8 +43,11 @@ def show_member_active_rank(chat, topn=10):
     st.markdown("---")
     st.header("🏇 活跃榜")
     st.caption("撑起群消息数半边天的废话大师 or 坚持日常出勤视察工作的领导")
-    fig = plot_member_active_rank(chat, topn)
-    st.plotly_chart(fig, use_container_width=True)
+    try:
+        fig = plot_member_active_rank(chat, topn)
+        st.plotly_chart(fig, use_container_width=True)
+    except Exception as err:
+        st.error(f"出现了一点问题：{err}")
 
 
 @st.experimental_memo
@@ -65,11 +68,14 @@ def show_member_recall_rank(chat, topn=10):
     st.markdown("---")
     st.header("␀ 撤回榜")
     st.caption("又撤回了什么见不得人的消息")
-    recall_rank = get_member_recall_rank(chat, topn)
-    _, col, _ = st.columns([1,2,1])
-    with col:
-        for name, recalls in recall_rank.items():
-            st.caption(f"`{name}` 撤回了 **`{recalls}`** 条消息")
+    try:
+        recall_rank = get_member_recall_rank(chat, topn)
+        _, col, _ = st.columns([1,2,1])
+        with col:
+            for name, recalls in recall_rank.items():
+                st.caption(f"`{name}` 撤回了 **`{recalls}`** 条消息")
+    except Exception as err:
+        st.error(f"出现了一点问题：{err}")
 
 
 @st.experimental_memo
@@ -116,8 +122,11 @@ def show_member_stayup_rank(chat, topn=10):
         2. 星星越宽，夜谈越欢（夜间消息数目）
     """)
     thresh = st.slider("熬夜界定", 0, 6, (0,6), format="%d:00 AM")
-    fig = plot_member_stayup_rank(chat, thresh, topn)
-    st.plotly_chart(fig, use_container_width=True)
+    try:
+        fig = plot_member_stayup_rank(chat, thresh, topn)
+        st.plotly_chart(fig, use_container_width=True)
+    except Exception as err:
+        st.error(f"出现了一点问题：{err}")
 
 
 def show_battle_of_two(chat):

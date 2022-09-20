@@ -34,7 +34,10 @@ body = build_page("WX Miner", "👀", "表情包榜", "据说每个聊天框都�
 with body:
     if "chat" in st.session_state:
         chat = st.session_state["chat"]
-        show_sticker_rank(chat)
+        try:
+            show_sticker_rank(chat)
+        except Exception as err:
+            st.error(f"出现了一点问题：{err}")
     else:
         st.markdown("---")
         st.warning("请先完成数据准备")
