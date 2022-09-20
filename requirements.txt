@@ -4,4 +4,5 @@ pandas
 plotly
 pyvis
 streamlit
+streamlit_ace
 wordcloud

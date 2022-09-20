@@ -19,7 +19,7 @@ def show_chat_loader():
             > 1. 打开 WX Backup 导出的聊天文件夹
             > 2. 上传 `js` 子文件夹中的 `message.js` 文件
         """)
-        st.file_uploader("上传 message.js 文件", type="js", key="file_uploaded")
+        st.file_uploader("上传 message.js 文件", type="js", key="file_uploaded", on_change=st.experimental_memo.clear)
     with tab2:
         if "backup_dir" in st.session_state:
             st.markdown("""
@@ -30,23 +30,23 @@ def show_chat_loader():
             st.error("该功能仅支持本地版")
 
 def show_chat_parser():
-    st.markdown("---")
-    st.header("👩‍🍳 解析数据")
-    with st.form("parser"):
-        with st.expander("补充本人信息"):
-            # self_id = st.text_input("微信号", value=SELF_ID_DEFAULT, max_chars=20)
-            self_name = st.text_input("你的微信昵称", value=SELF_NAME_DEFAULT, max_chars=20)
-        button_parse = st.form_submit_button("开始解析")
-    if button_parse:
-        try:
-            file = st.session_state["file_uploaded"]
-            chat = parse_chat(file, self_id=None, self_name=self_name)
-        except Exception as err:
-            st.error(f"聊天记录解析失败: {err}")
-        else:
-            st.session_state["chat"] = chat
-            st.success("聊天记录解析成功！")
-            show_date_picker()
+    if "chat" in st.session_state or st.session_state["file_uploaded"]:
+        st.markdown("---")
+        st.header("👩‍🍳 解析数据")
+        with st.form("parser"):
+            with st.expander("补充本人信息"):
+                # self_id = st.text_input("微信号", value=SELF_ID_DEFAULT, max_chars=20)
+                self_name = st.text_input("你的微信昵称", value=SELF_NAME_DEFAULT, max_chars=20)
+            button_parse = st.form_submit_button("开始解析")
+        if button_parse:
+            try:
+                file = st.session_state["file_uploaded"]
+                chat = parse_chat(file, self_id=None, self_name=self_name)
+            except Exception as err:
+                st.error(f"聊天记录解析失败: {err}")
+            else:
+                st.session_state["chat"] = chat
+                st.success("聊天记录解析成功！")
 
 @st.experimental_memo
 def parse_chat(message_file, self_id, self_name):
@@ -55,25 +55,22 @@ def parse_chat(message_file, self_id, self_name):
     return chat
 
 def show_date_picker():
-    st.markdown("---")
-    st.header("📅 选取时间")
-    with st.form("datepicker"):
-        min_date, max_date = st.session_state["chat"].get_date_span()
-        sdate = st.date_input("请选择挖掘开始日期", min_date, key="sdate")
-        edate = st.date_input("请选择挖掘结束日期", max_date, key="edate")
-        button_date = st.form_submit_button("确认")
-    if button_date:
-        st.session_state["chat"].set_date_span(sdate, edate)
-        st.success("时间选取成功！挖掘准备就绪，请到后续页面查看！")
-        st.balloons()
+    if "chat" in st.session_state:
+        st.markdown("---")
+        st.header("📅 选取时间")
+        with st.form("datepicker"):
+            min_date, max_date = st.session_state["chat"].get_date_span()
+            sdate = st.date_input("请选择挖掘开始日期", min_date, key="sdate")
+            edate = st.date_input("请选择挖掘结束日期", max_date, key="edate")
+            button_date = st.form_submit_button("确认")
+        if button_date:
+            st.session_state["chat"].set_date_span(sdate, edate)
+            st.success("时间选取成功！挖掘准备就绪，请到后续页面查看！")
+            st.balloons()
 
 
 body = build_page("WX Miner", "🍽", "数据准备", "向 WX Miner 投喂原料")
 with body:
     show_chat_loader()
-    if "chat" not in st.session_state:
-        if st.session_state["file_uploaded"]:
-            show_chat_parser()
-    else:
-        show_chat_parser()
-        show_date_picker()
+    show_chat_parser()
+    show_date_picker()
