@@ -7,7 +7,7 @@ ST_PAGE_ICON_DEFAULT = "💬"
 ST_HEADER_TITLE_DEFAULT = "WX Miner"
 ST_HEADER_DESCRIPTION_DEFAULT = "重识微信聊天记录"
 ST_FOOTER_CONTENT_DEFAULT = "Copyright © 2022, Celevn"
-QR_GROUP_URL = "https://user-images.githubusercontent.com/10850975/190350607-7a5e3ca9-75fa-4864-85f4-2dc2718cd5cf.PNG"
+QR_GROUP_URL = "https://user-images.githubusercontent.com/10850975/191168665-edfa156b-c10a-48f3-bd37-caea07ca5ffd.PNG"
 QR_DONATE_URL = "https://user-images.githubusercontent.com/10850975/189103585-240ca79d-b3d9-46b7-9ee9-98a5051db706.PNG"
 
 

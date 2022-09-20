@@ -20,6 +20,7 @@ with body:
         st.markdown("""
             - 使用链接：`https://share.streamlit.io/celevn/wxminer/main/src/home.py`
             - 录屏分享：右上角菜单 - `Record a screencast`
+            - 导出图片：大部分图表可导出图片，也可通过截图方式留存
         """)
     with st.expander("2. 请作者喝咖啡"):
         st.image(QR_DONATE_URL)
